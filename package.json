@@ -1,0 +1,14 @@
+{
+  "name": "medireq-server",
+  "version": "1.0.0",
+  "description": "The server software for the MediReq system",
+  "main": "system/Service/serviceInterface.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ben Wright",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
