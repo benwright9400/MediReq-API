@@ -216,14 +216,15 @@ async function setOrganisationStaff(organisationId, staffArray) {
 
 
 //create staff
-async function createStaff(organisationId, type, email, fName, lName) {
+async function createStaff(organisationId, type, email, fName, lName, permission) {
     try {
         const staff = new TPSResponseStaff({
             type: type,
             organisationId: organisationId,
             email: email,
             firstName: fName,
-            lastName: lName
+            lastName: lName,
+            permission: permission
         });
 
         const result = await staff.save();
@@ -233,7 +234,8 @@ async function createStaff(organisationId, type, email, fName, lName) {
             organisationId: organisationId,
             email: email,
             firstName: fName,
-            lastName: lName
+            lastName: lName,
+            permission: permission
         }) {
             return result._id;
         }
@@ -255,6 +257,8 @@ async function updateStaff(staffId, updateVariable, updateValue) {
         update = {email: updateValue};
     } else if (updateVariable === "lName") {
         update = {lName: updateValue};
+    } else if (updateVariable === "permission") {
+        update = {permission: updateValue};
     } else { // updateVariable === "fName"
         update = {fName: updateValue};
     }
@@ -262,7 +266,7 @@ async function updateStaff(staffId, updateVariable, updateValue) {
 
     try {
 
-        const staffRequest = await Organisation.findOneAndUpdate({_id: staffId},
+        const staffRequest = await TPSResponseStaff.findOneAndUpdate({_id: staffId},
             update, {new: true});
         
         if(staffRequest) {
@@ -277,3 +281,131 @@ async function updateStaff(staffId, updateVariable, updateValue) {
     
     return false;
 }
+
+//get staff member
+async function findStaff(organisationId, type, email, fName, lName, permission) {
+    try {
+        const staffMember = await TPSResponseStaff.find({
+            type: type,
+            organisationId: organisationId,
+            email: email,
+            firstName: fName,
+            lastName: lName,
+            permission: permission
+        });
+        if(staffMember) {
+            return staffMember;
+        }
+    } catch (error) {
+        return false;
+    }
+    return false;
+}
+
+module.exports.findStaff = findStaff;
+
+async function findStaffById(id) {
+    try {
+        const staffMember = await TPSResponseStaff.findById(id);
+        if(staffMember) {
+            return staffMember;
+        }
+    } catch (error) {
+        return false;
+    }
+    return false;
+}
+module.exports.findStaffById = findStaffById;
+
+
+//elderley person
+
+// const ElderlyPersona = mongoose.model("PatientUser", {
+//     fullName: String,
+//     addressFirstLine: String,
+//     addressPostCode: String,
+//     dateOfBirth: String 
+// });
+
+async function createElderlyPerson(fullName, addressFirstLine, addressPostCode, dateOfBirth) {
+    let newElderlyPerson = new ElderlyPerson({
+        fullName: fullName,
+        addressFirstLine: addressFirstLine,
+        addressPostCode: addressPostCode,
+        dateOfBirth: dateOfBirth 
+    });
+
+
+    const result = await newElderlyPerson.save();
+
+    if(result === {
+        fullName: fullName,
+        addressFirstLine: addressFirstLine,
+        addressPostCode: addressPostCode,
+        dateOfBirth: dateOfBirth 
+    }) {
+        return true;
+    }
+
+    return false;
+}
+
+module.exports.createElderlyPerson = createElderlyPerson;
+
+async function findElderlyPersonById(id) {
+    try {
+        let elderlyPerson = await ElderlyPerson.findById(id);
+
+        if(elderlyPerson) {
+            return elderlyPerson;
+        }
+    } catch (error) {
+        return false;
+    }
+    return false;   
+}
+
+module.exports.findElderlyPersonById = findElderlyPersonById;
+
+
+async function assertElderlyPersonByExists(fullName, addrFirstLine, postCode, dateOfBirth, id) {
+    try {
+        let elderlyPerson = await ElderlyPerson.find({
+            _id: id,
+            fullName: fullName,
+            addressFirstLine: addrFirstLine,
+            addressPostCode: postCode,
+            dateOfBirth: dateOfBirth 
+        });
+
+        if(elderlyPerson) {
+            return elderlyPerson;
+        }
+
+    } catch (error) {
+        return false;
+    }
+    return false;   
+}
+
+module.exports.assertElderlyPersonByExists = assertElderlyPersonByExists;
+
+//logging
+const Log = mongoose.model("Log", {time: String, message: String});
+
+async function createLog(message) {
+    const newLog = new Log({
+        time: (new Date()).toUTCString(),
+        message: message
+    });
+
+    const result = newLog.save();
+
+    if(result) {
+        return true;
+    }
+
+    return false;
+}
+
+module.exports.createLog = createLog;
