@@ -92,13 +92,9 @@ app.get("/TPS/staffCases", (req, res) => {
 
 async function checkSecurity(req, onSuccess, onFailure) {
 
-    let decryptedText = await cryptography.decrypt(req.body);
+    let reqBody = await decryptReqBody(req, onFailure);
 
-    let reqBody;
-    try {
-        reqBody = JSON.parse(decryptedText);
-        console.log(reqBody.Keys());
-    } catch (error) {
+    if(reqBody === false) {
         await onFailure();
         return false;
     }
@@ -124,10 +120,7 @@ async function checkSecurity(req, onSuccess, onFailure) {
     }
     
 
-
-    let hash = reqBody.hash; //get hash from decrypted text
-
-    if(!(await integrityCheck.hashMatches(decryptedText, hash, context))) {
+    if(!(await integrityCheck.hashMatches(decryptedText, reqBody.hash, context))) {
         await onFailure();
         return false;
     }
@@ -149,4 +142,18 @@ async function checkSecurity(req, onSuccess, onFailure) {
     await onFailure();
     return false;
 
+}
+
+async function decryptReqBody(req) {
+    let decryptedText = await cryptography.decrypt(req);
+
+    let reqBody;
+    try {
+        reqBody = JSON.parse(decryptedText);
+        console.log(reqBody.Keys());
+    } catch (error) {
+        return false;
+    }
+
+    return reqBody;
 }
