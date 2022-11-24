@@ -15,40 +15,64 @@ app.listen(3000, () => {
 app.post("/client/medicalRequest", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
 app.post("/client/medicalRequestDetails", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
 app.post("/client/subjectAccessrequest", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
 app.post("/client/legal", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
@@ -58,10 +82,16 @@ app.post("/client/legal", (req, res) => {
 app.get("/TPS/anonymousCollection", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
@@ -71,10 +101,16 @@ app.get("/TPS/anonymousCollection", (req, res) => {
 app.get("/TPS/regionalCases", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
@@ -83,10 +119,16 @@ app.get("/TPS/regionalCases", (req, res) => {
 app.get("/TPS/staffCases", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
+        if(containsCorrectKeys(reqBody)) {
 
+
+
+        } else {
+            res.send("invalid request");
+        }
     }, () => {
         //failure
-
+        res.send("invalid request");
     });
 });
 
@@ -99,22 +141,11 @@ async function checkSecurity(req, onSuccess, onFailure) {
         return false;
     }
 
-    let context = {
-        ip: req.ip,
-        requestType: reqBody.requestType,
-        userType: reqBody.userType
-    };
+    let context = await generateContext(req, reqBody);
 
-    let userData;
-    if(context.userType === authorisor.TPS_STAFF) {
-        userData = {
+    let userData = await generateUserData(context, reqBody);
 
-        };
-    } else if(context.userType === authorisor.ELDERLY_PERSON) {
-        userData = {
-
-        };
-    } else {
+    if(userData == false) {
         await onFailure();
         return false;
     }
@@ -156,4 +187,56 @@ async function decryptReqBody(req) {
     }
 
     return reqBody;
+}
+
+async function generateContext(req, reqBody) {
+    let context = {
+        ip: req.ip,
+        requestType: reqBody.requestType,
+        userType: reqBody.userType
+    };
+    return context;
+}
+
+async function generateUserData(context, reqBody) {
+    let userData;
+    if(context.userType === authorisor.TPS_STAFF) {
+        userData = {
+            userType: context.userType,
+            requestType: "",
+            organisationId: "",
+            type: "",
+            email: "",
+            fullName: "",
+            fName: "",
+            lName: "",
+            permission: ""
+        };
+    } else if(context.userType === authorisor.ELDERLY_PERSON) {
+        userData = {
+            userType: context.userType,
+            fullName: "",
+            fName: "",
+            lName: "",
+            addrFirstLine: "", 
+            postCode: "",
+            dateOfBirth: ""
+        };
+    } else {
+        userData = false;
+    }
+    return userData;
+}
+
+function containsCorrectKeys(object) {
+    let keys = ["fName", "lName", "userType", "requestType", "content"];
+
+    let keysMatch = true;
+    for(let i = 0; i < keys.length; i++) {
+        if(!(object.hasOwnProperty(keys[i]))) {
+            keysMatch = false;
+        }
+    }
+
+    return keysMatch;
 }
