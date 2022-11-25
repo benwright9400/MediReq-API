@@ -17,7 +17,8 @@ const ElderlyPerson = mongoose.model("PatientUser", {
     fullName: String,
     addressFirstLine: String,
     addressPostCode: String,
-    dateOfBirth: String 
+    dateOfBirth: String,
+    TermsAndConditions: Boolean 
 });
 
 //create model for request
@@ -60,7 +61,7 @@ async function getAllPreviousMedicalRequestsByRegion(region) {
 }
 
 //get all current requests by region
-async function getAllPreviousMedicalRequestsByRegion(region) {
+async function getAllCurrentMedicalRequestsByRegion(region) {
     const medicalRequests = MedicalRequest.find({
         addressPostCode: {
             $regex: region,
@@ -72,14 +73,19 @@ async function getAllPreviousMedicalRequestsByRegion(region) {
     return medicalRequests;
 }
 
+module.exports.getAllCurrentMedicalRequestsByRegion = getAllCurrentMedicalRequestsByRegion;
+
 //get relevant cases
-async function getAllPreviousMedicalRequestsByRegion(handlerId) {
+async function getAllCurrentCasesByHandler(handlerId) {
     const medicalRequests = MedicalRequest.find({
-        handler: handlerId
+        handler: handlerId,
+        completed: false
     });
 
     return medicalRequests;
 }
+
+module.exports.getAllCurrentCasesByHandler = getAllCurrentCasesByHandler;
 
 //Add medical request
 async function addMedicalRequest(userId) {
@@ -98,7 +104,7 @@ async function addMedicalRequest(userId) {
         const result = await medicalRequest.save();
         
         if(result === {userId: userId}) {
-            return true;
+            return result._id;
         }
     } catch (error) {
         return false;
@@ -106,6 +112,8 @@ async function addMedicalRequest(userId) {
     
     return false;
 }
+
+module.exports.addMedicalRequest = addMedicalRequest;
 
 //Add further medical info
 async function addFurtherInfo(requestId, medicalIssue) {
@@ -124,6 +132,26 @@ async function addFurtherInfo(requestId, medicalIssue) {
     return false
 }
 
+module.exports.addFurtherInfo = addFurtherInfo;
+
+async function setMediReqHandler(requestId, handlerId) {
+    try {
+        const medicalRequest = MedicalRequest.findOneAndUpdate({_id: requestId},
+            {handler: handlerId}, {new: true});
+        
+        if(medicalRequest) {
+            return true;
+        }
+
+    } catch (error) {
+        return false;
+    }
+
+    return false
+}
+
+module.exports.setMediReqHandler = setMediReqHandler;
+
 //Add subject access request
 
 async function addSubjectAccessRequest(userId) {
@@ -131,7 +159,7 @@ async function addSubjectAccessRequest(userId) {
         const sar = new SARRequest({userId: userId});
         const result = sar.save();
 
-        if(sar === {userId: userId}) {
+        if(result === {userId: userId}) {
             return true;
         }
 
@@ -141,6 +169,8 @@ async function addSubjectAccessRequest(userId) {
 
     return false;
 }
+
+module.exports.addSubjectAccessRequest = addSubjectAccessRequest;
 
 //create organisation account
 async function createOrganisation(name, region, permissions) {
@@ -162,6 +192,8 @@ async function createOrganisation(name, region, permissions) {
     
     return false;
 }
+
+module.exports.createOrganisation = createOrganisation;
 
 
 
@@ -197,6 +229,8 @@ async function getOrganisationStaffIds(organisationId) {
 
     return false;
 }
+
+module.exports.getOrganisationStaffIds = getOrganisationStaffIds;
 
 //set organisation staff
 async function setOrganisationStaff(organisationId, staffArray) {
@@ -327,12 +361,13 @@ module.exports.findStaffById = findStaffById;
 //     dateOfBirth: String 
 // });
 
-async function createElderlyPerson(fullName, addressFirstLine, addressPostCode, dateOfBirth) {
+async function createElderlyPerson(fullName, addressFirstLine, addressPostCode, dateOfBirth, TandCs) {
     let newElderlyPerson = new ElderlyPerson({
         fullName: fullName,
         addressFirstLine: addressFirstLine,
         addressPostCode: addressPostCode,
-        dateOfBirth: dateOfBirth 
+        dateOfBirth: dateOfBirth,
+        TermsAndConditions: TandCs
     });
 
 
@@ -342,7 +377,8 @@ async function createElderlyPerson(fullName, addressFirstLine, addressPostCode, 
         fullName: fullName,
         addressFirstLine: addressFirstLine,
         addressPostCode: addressPostCode,
-        dateOfBirth: dateOfBirth 
+        dateOfBirth: dateOfBirth,
+        TermsAndConditions: TandCs 
     }) {
         return true;
     }
@@ -389,6 +425,40 @@ async function assertElderlyPersonByExists(fullName, addrFirstLine, postCode, da
 }
 
 module.exports.assertElderlyPersonByExists = assertElderlyPersonByExists;
+
+async function acceptTandCs(userId) {
+    try {
+        let elderlyPerson = await ElderlyPerson.findByIdAndUpdate(userId, {
+            TermsAndConditions: true
+        })
+
+        if(elderlyPerson) {
+            return elderlyPerson;
+        }
+    } catch (error) {
+        return false;
+    }
+    return false;  
+}
+
+module.exports.acceptTandCs = acceptTandCs;
+
+async function stopTandCs(userId) {
+    try {
+        let elderlyPerson = await ElderlyPerson.findByIdAndUpdate(userId, {
+            TermsAndConditions: false
+        })
+
+        if(elderlyPerson) {
+            return elderlyPerson;
+        }
+    } catch (error) {
+        return false;
+    }
+    return false; 
+}
+
+module.exports.stopTandCs = stopTandCs;
 
 //logging
 const Log = mongoose.model("Log", {time: String, message: String});
