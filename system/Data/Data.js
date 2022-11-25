@@ -102,10 +102,12 @@ async function addMedicalRequest(userId) {
         });
 
         const result = await medicalRequest.save();
+        console.log(result);
         
-        if(result === {userId: userId}) {
+        if(result._id) {
             return result._id;
         }
+
     } catch (error) {
         return false;
     }
@@ -373,14 +375,10 @@ async function createElderlyPerson(fullName, addressFirstLine, addressPostCode, 
 
     const result = await newElderlyPerson.save();
 
-    if(result === {
-        fullName: fullName,
-        addressFirstLine: addressFirstLine,
-        addressPostCode: addressPostCode,
-        dateOfBirth: dateOfBirth,
-        TermsAndConditions: TandCs 
-    }) {
-        return true;
+    console.log(result);
+
+    if(result._id) {
+        return result._id;
     }
 
     return false;
@@ -390,7 +388,10 @@ module.exports.createElderlyPerson = createElderlyPerson;
 
 async function findElderlyPersonById(id) {
     try {
+        console.log(id);
         let elderlyPerson = await ElderlyPerson.findById(id);
+
+        console.log(elderlyPerson);
 
         if(elderlyPerson) {
             return elderlyPerson;
@@ -406,13 +407,16 @@ module.exports.findElderlyPersonById = findElderlyPersonById;
 
 async function assertElderlyPersonByExists(fullName, addrFirstLine, postCode, dateOfBirth, id) {
     try {
-        let elderlyPerson = await ElderlyPerson.find({
-            _id: id,
+        let DOCUMENT_ID = id;
+        let elderlyPerson = await ElderlyPerson.findOne({
+            _id: DOCUMENT_ID,
             fullName: fullName,
             addressFirstLine: addrFirstLine,
             addressPostCode: postCode,
             dateOfBirth: dateOfBirth 
         });
+
+        console.log(elderlyPerson);
 
         if(elderlyPerson) {
             return elderlyPerson;

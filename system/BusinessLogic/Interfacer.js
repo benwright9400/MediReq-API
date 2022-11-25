@@ -1,6 +1,12 @@
 const database = require("./../Data/Data");
 
 //elderly person
+async function createElderlyPerson(fullName, address, postCode, dateOfBirth, TandCs) {
+    let result = await database.createElderlyPerson(fullName, address, postCode, dateOfBirth, TandCs);
+    return result;
+}
+module.exports.createElderlyPerson = createElderlyPerson;
+
 async function addMedicalRequest(userId) {
     let result = await database.addMedicalRequest(userId); //evals to false or _id for object
 
@@ -8,6 +14,7 @@ async function addMedicalRequest(userId) {
         let i = 0;
         while(i < 2 && result === false) {
             result = await database.addMedicalRequest(userId);
+            i++;
         }
     }
 

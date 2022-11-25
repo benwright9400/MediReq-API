@@ -1,12 +1,13 @@
 const logger = require("./../Security/Logging");
 const database = require("./../Data/Data");
+const authorisor = require("./Authorisation");
 
 async function assertExists(type, data, context) {
-    if(type === "ElderlyPerson") {
-        const result = await assertElderlyPersonExists(...data);
+    if(type === authorisor.ELDERLY_PERSON) {
+        const result = await assertElderlyPersonExists(data.fullName, data.addrFirstLine, data.postCode, data.dateOfBirth, data.id);
         if(result === false) logFailedAuth(data, context);
         return result;
-    } else if (type === "TPSStaff") {
+    } else if (type === authorisor.TPS_STAFF) {
         const result = await assertTPSStaffExists(...data);
         if(result === false) logFailedAuth(data, context);
         return result;
@@ -21,13 +22,17 @@ module.exports.assertExists = assertExists;
 async function assertElderlyPersonExists(fullName, addrFirstLine, postCode, dateOfBirth, id) {
     const result = await database.assertElderlyPersonByExists(fullName, addrFirstLine, postCode, dateOfBirth, id);
 
+    // const result = await database.findElderlyPersonById(id);
+
+    console.log(result);
+
     if(result === false) {
         return false;
     }
 
-    if(result.length != 6) { //6 = no. keys in returned object
-        return false;
-    }
+    // if(result.length != 6) { //6 = no. keys in returned object
+    //     return false;
+    // }
 
     return result._id;
 }

@@ -3,8 +3,14 @@ const authenticator = require("./../Security/Authentication");
 const authorisor = require("./../Security/Authorisation");
 const cryptography = require("./../Security/Cryptography");
 const integrityCheck = require("./../Security/IntegrityCheck");
+const interfacer = require("./../BusinessLogic/Interfacer");
+const bodyParser = require("body-parser");
 
 const app = express();
+
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.use(bodyParser.json());
 
 app.listen(3000, () => {
     console.log("server running on port 3000");
@@ -12,14 +18,30 @@ app.listen(3000, () => {
 
 // elderly person
 
+app.post("/client/createElderlyPerson", (req, res) => { //added
+    interfacer.createElderlyPerson(req.body.fullName, req.body.address, req.body.postCode, req.body.dateOfBirth, true)
+        .then(result => {
+            if(result === false) {
+                res.send("invalid request");
+            } else {
+                res.send(result);
+            }
+        });
+});
+
 app.post("/client/medicalRequest", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
         if(containsCorrectKeys(reqBody)) {
 
-
+            let userId = reqBody.id;
+            interfacer.addMedicalRequest(userId).then((id) => {
+                console.log(id);
+                res.send("action performed: " + id);
+            });
 
         } else {
+            console.log("invalid keys");
             res.send("invalid request");
         }
     }, () => {
@@ -134,7 +156,8 @@ app.get("/TPS/staffCases", (req, res) => {
 
 async function checkSecurity(req, onSuccess, onFailure) {
 
-    let reqBody = await decryptReqBody(req, onFailure);
+    // let reqBody = await decryptReqBody(req, onFailure);
+    let reqBody = req.body;
 
     if(reqBody === false) {
         await onFailure();
@@ -151,10 +174,10 @@ async function checkSecurity(req, onSuccess, onFailure) {
     }
     
 
-    if(!(await integrityCheck.hashMatches(decryptedText, reqBody.hash, context))) {
-        await onFailure();
-        return false;
-    }
+    // if(!(await integrityCheck.hashMatches(decryptedText, reqBody.hash, context))) {
+    //     await onFailure();
+    //     return false;
+    // }
 
     let authentication = await authenticator.assertExists(context.userType, userData, context);
 
@@ -215,12 +238,11 @@ async function generateUserData(context, reqBody) {
     } else if(context.userType === authorisor.ELDERLY_PERSON) {
         userData = {
             userType: context.userType,
-            fullName: "",
-            fName: "",
-            lName: "",
-            addrFirstLine: "", 
-            postCode: "",
-            dateOfBirth: ""
+            fullName: reqBody.fName + " " + reqBody.lName,
+            addrFirstLine: reqBody.address, 
+            postCode: reqBody.postCode,
+            dateOfBirth: reqBody.dateOfBirth,
+            id: reqBody.id
         };
     } else {
         userData = false;
