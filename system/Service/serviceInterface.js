@@ -165,6 +165,7 @@ async function checkSecurity(req, onSuccess, onFailure) {
         await onFailure();
         return false;
     }
+    console.log("body exists");
 
     let context = await generateContext(req, reqBody);
 
@@ -174,6 +175,7 @@ async function checkSecurity(req, onSuccess, onFailure) {
         await onFailure();
         return false;
     }
+    console.log("user data generated");
     
 
     // if(!(await integrityCheck.hashMatches(decryptedText, reqBody.hash, context))) {
@@ -187,10 +189,12 @@ async function checkSecurity(req, onSuccess, onFailure) {
         await onFailure();
         return false;
     }
+    console.log("authenticated");
 
     userData.id = authentication;
 
     if(await authorisor.userCanPerform(context.requestType, userData.id, userData.userType, context)) {
+        console.log("authorised");
         await onSuccess(reqBody);
         return true;
     }
