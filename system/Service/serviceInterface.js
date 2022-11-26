@@ -46,6 +46,7 @@ app.post("/client/medicalRequest", (req, res) => {
         }
     }, () => {
         //failure
+        console.log("security failure");
         res.send("invalid request");
     });
 });
