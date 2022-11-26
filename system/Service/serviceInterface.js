@@ -161,6 +161,7 @@ async function checkSecurity(req, onSuccess, onFailure) {
     let reqBody = req.body;
     console.log(reqBody);
     console.log("body assigned");
+    console.log(reqBody.requestType);
 
     if(reqBody === false) {
         await onFailure();
