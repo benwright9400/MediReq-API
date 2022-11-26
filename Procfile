@@ -1,1 +1,1 @@
-worker: node system/Service/serviceInterface.js
+web: node system/Service/serviceInterface.js
