@@ -158,7 +158,7 @@ app.get("/TPS/staffCases", (req, res) => {
 async function checkSecurity(req, onSuccess, onFailure) {
 
     // let reqBody = await decryptReqBody(req, onFailure);
-    let reqBody = req.body;
+    let reqBody = JSON.parse(req.body);
     console.log(reqBody);
 
     if(reqBody === false) {
