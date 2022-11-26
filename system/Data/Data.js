@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const env = require("../values");
 
-mongoose.connect(env.mongooseConnection);
+mongoose.connect("mongodb+srv://server:D0Vlk9mIbwI11IQt@medireq0.m7es4pc.mongodb.net/?retryWrites=true&w=majority");
 
 //create model for TPSResponseStaff
 const TPSResponseStaff = mongoose.model("Staff", {
