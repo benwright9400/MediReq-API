@@ -159,6 +159,7 @@ async function checkSecurity(req, onSuccess, onFailure) {
 
     // let reqBody = await decryptReqBody(req, onFailure);
     let reqBody = req.body;
+    console.log(reqBody);
 
     if(reqBody === false) {
         await onFailure();
