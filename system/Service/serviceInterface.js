@@ -160,6 +160,7 @@ async function checkSecurity(req, onSuccess, onFailure) {
     // let reqBody = await decryptReqBody(req, onFailure);
     let reqBody = req.body;
     console.log(reqBody);
+    console.log("body assigned");
 
     if(reqBody === false) {
         await onFailure();
