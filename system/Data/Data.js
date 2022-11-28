@@ -98,7 +98,8 @@ async function addMedicalRequest(userId) {
             completed: false, 
             dateTime: ((new Date()).toUTCString()),
             addressFirstLine: user.addressFirstLine,
-            addressPostCode: user.addressPostCode
+            addressPostCode: user.addressPostCode,
+            furtherInfo: {medicalIssue: ""}
         });
 
         const result = await medicalRequest.save();
