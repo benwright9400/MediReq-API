@@ -120,7 +120,7 @@ module.exports.addMedicalRequest = addMedicalRequest;
 //Add further medical info
 async function addFurtherInfo(requestId, medicalIssue) {
     try {
-        const medicalRequest = await MedicalRequest.findByIdAndUpdate(requestId, 
+        const medicalRequest = await MedicalRequest.findOneAndUpdate({_id: requestId}, 
             {furtherInfo: {medicalIssue: medicalIssue}}, {new: true});
         
         if(medicalRequest) {
