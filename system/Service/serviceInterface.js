@@ -59,6 +59,8 @@ app.post("/client/medicalRequestDetails", (req, res) => {
             const requestId = reqBody.reqId;
             const furtherInfo = reqBody.furtherInfo;
 
+            console.log(requestId + ": " + furtherInfo);
+
             interfacer.addMedicalRequestDetails(requestId, furtherInfo).then((result) => {
                 console.log(result);
                 res.send(result);
