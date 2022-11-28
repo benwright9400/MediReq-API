@@ -131,7 +131,7 @@ async function addFurtherInfo(requestId, medicalIssue) {
         return false;
     }
 
-    return false
+    return false;
 }
 
 module.exports.addFurtherInfo = addFurtherInfo;
@@ -149,7 +149,7 @@ async function setMediReqHandler(requestId, handlerId) {
         return false;
     }
 
-    return false
+    return false;
 }
 
 module.exports.setMediReqHandler = setMediReqHandler;
