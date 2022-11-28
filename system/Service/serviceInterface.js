@@ -56,7 +56,9 @@ app.post("/client/medicalRequestDetails", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
         if(containsCorrectKeys(reqBody)) {
-            const requestId = reqBody.reqId;
+            let requestId = reqBody.reqId;
+            requestId = requestId.substr(1, requestId.length - 1);
+
             const furtherInfo = reqBody.furtherInfo;
 
             console.log(requestId + ": " + furtherInfo);
