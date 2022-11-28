@@ -120,6 +120,7 @@ module.exports.addMedicalRequest = addMedicalRequest;
 
 //Add further medical info
 async function addFurtherInfo(requestId, medicalIssue) {
+    console.log("reached data");
     try {
         const medicalRequest = await MedicalRequest.findOneAndUpdate({_id: requestId}, 
             {furtherInfo: {medicalIssue: medicalIssue}}, {new: true});
@@ -127,13 +128,17 @@ async function addFurtherInfo(requestId, medicalIssue) {
         console.log("returned value: " + medicalRequest);
         
         if(medicalRequest) {
+            console.log("exited data");
             return true;
         }
 
     } catch (error) {
+        console.log(error);
+        console.log("exited data");
         return false;
     }
 
+    console.log("exited data");
     return false;
 }
 

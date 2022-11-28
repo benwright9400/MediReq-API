@@ -24,6 +24,7 @@ async function addMedicalRequest(userId) {
 module.exports.addMedicalRequest = addMedicalRequest;
 
 async function addMedicalRequestDetails(requestId, furtherInfo) {
+    console.log("reached interfacer");
     let result = await database.addFurtherInfo(requestId, furtherInfo);
 
     if(result === false) {
@@ -32,6 +33,8 @@ async function addMedicalRequestDetails(requestId, furtherInfo) {
             result = await database.addFurtherInfo(requestId, furtherInfo);
         }
     }
+
+    console.log("exited interfacer");
 
     return result;
 }
