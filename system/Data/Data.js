@@ -169,7 +169,7 @@ async function addSubjectAccessRequest(userId) {
         const sar = new SARRequest({userId: userId});
         const result = sar.save();
 
-        if(result === {userId: userId}) {
+        if(result) {
             return true;
         }
 

@@ -77,12 +77,20 @@ app.post("/client/medicalRequestDetails", (req, res) => {
     });
 });
 
-app.post("/client/subjectAccessrequest", (req, res) => {
+app.post("/client/subjectAccessRequest", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
         if(containsCorrectKeys(reqBody)) {
 
+            let id = reqBody.id;
 
+            interfacer.addSubjectAccessRequest(id).then((result) => {
+                if(result !== false) {
+                    res.send("task completed")
+                } else {
+                    res.send("invalid request");
+                }
+            });
 
         } else {
             res.send("invalid request");
