@@ -56,8 +56,13 @@ app.post("/client/medicalRequestDetails", (req, res) => {
     checkSecurity(req, (reqBody) => {
         //success
         if(containsCorrectKeys(reqBody)) {
+            const requestId = reqBody.reqId;
+            const furtherInfo = reqBody.furtherInfo;
 
-
+            interfacer.addMedicalRequestDetails(requestId, furtherInfo).then(result => {
+                console.log(result);
+                res.send(result);
+            });
 
         } else {
             res.send("invalid request");
