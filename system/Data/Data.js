@@ -123,6 +123,8 @@ async function addFurtherInfo(requestId, medicalIssue) {
     try {
         const medicalRequest = await MedicalRequest.findOneAndUpdate({_id: requestId}, 
             {furtherInfo: {medicalIssue: medicalIssue}}, {new: true});
+
+        console.log("returned value: " + medicalRequest);
         
         if(medicalRequest) {
             return true;
