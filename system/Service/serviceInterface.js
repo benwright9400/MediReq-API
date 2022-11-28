@@ -57,7 +57,7 @@ app.post("/client/medicalRequestDetails", (req, res) => {
         //success
         if(containsCorrectKeys(reqBody)) {
             let requestId = reqBody.reqId;
-            requestId = requestId.substr(1, requestId.length - 1);
+            requestId = requestId.substr(1, requestId.length - 2);
 
             const furtherInfo = reqBody.furtherInfo;
 
