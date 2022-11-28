@@ -31,6 +31,7 @@ async function addMedicalRequestDetails(requestId, furtherInfo) {
         let i = 0;
         while(i < 2 && result === false) {
             result = await database.addFurtherInfo(requestId, furtherInfo);
+            i++;
         }
     }
 
@@ -48,6 +49,7 @@ async function addSubjectAccessRequest(userId) {
         let i = 0;
         while(i < 2 && result === false) {
             result = await database.addSubjectAccessRequest(userId);
+            i++;
         }
     }
 
@@ -63,6 +65,7 @@ async function acceptTCs(userId) {
         let i = 0;
         while(i < 2 && result === false) {
             result = await database.acceptTandCs(userId);
+            i++;
         }
     }
 
@@ -78,6 +81,7 @@ async function stopTCs(userId) {
         let i = 0;
         while(i < 2 && result === false) {
             result = await database.stopTandCs(userId);
+            i++;
         }
     }
 
