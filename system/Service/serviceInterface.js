@@ -38,7 +38,7 @@ app.post("/client/medicalRequest", (req, res) => {
             let userId = reqBody.id;
             interfacer.addMedicalRequest(userId).then((id) => {
                 console.log(id);
-                res.send("action performed: " + id);
+                res.send(id);
             });
 
         } else {
