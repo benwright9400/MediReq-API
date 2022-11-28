@@ -86,7 +86,7 @@ app.post("/client/subjectAccessRequest", (req, res) => {
 
             interfacer.addSubjectAccessRequest(id).then((result) => {
                 if(result !== false) {
-                    res.send("task completed")
+                    res.send("task completed");
                 } else {
                     res.send("invalid request");
                 }
@@ -106,7 +106,16 @@ app.post("/client/legal", (req, res) => {
         //success
         if(containsCorrectKeys(reqBody)) {
 
+            // let legalTask = reqBody.legalTask;
+            let id = reqBody.id;
 
+            interfacer.stopTCs(id).then((result) => {
+                if(result !== false) {
+                    res.send("task completed");
+                } else {
+                    res.send("invalid request");
+                }
+            });
 
         } else {
             res.send("invalid request");
